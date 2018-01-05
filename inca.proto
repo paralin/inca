@@ -1,0 +1,60 @@
+syntax = "proto3";
+package inca;
+
+import "github.com/go-libp2p-crypto/pb/crypto.proto";
+import "github.com/aperturerobotics/inca/timestamp/timestamp.proto";
+
+// StorageRef references storage.
+message StorageRef {
+  // StorageType contains the type of storage this is.
+  StorageType storage_type = 1;
+  // Ipfs contains a IPFS storage reference.
+  StorageRefIPFS ipfs = 2;
+}
+
+// StorageRefIPFS references an object in IPFS.
+message StorageRefIPFS {
+  // ObjectHash contains the referenced object hash.
+  bytes object_hash = 1;
+}
+
+// StorageType contains the possible types of storage.
+enum StorageType {
+  // StorageType_UNKNOWN holds unknown values.
+  StorageType_UNKNOWN = 0;
+  // StorageType_IPFS is the IPFS storage type.
+  StorageType_IPFS = 1;
+}
+
+// Validator holds information about a validator.
+message Validator {
+  // PubKey is the validator's public key.
+  crypto.pb.PublicKey pub_key = 1;
+  // VotingPower is the voting power of the validator.
+  uint64 voting_power = 2;
+  // OperationMode is the operation mode of the validator.
+  OperationMode operation_mode = 3;
+
+  // OperationMode is the operation mode of the validator.
+  enum OperationMode {
+    // OperationMode_STAGING indicates the validator is not currently online.
+    OperationMode_STAGING = 0;
+    // OperationMode_OPERATING indicates the validator is currently operating.
+    OperationMode_OPERATING = 1;
+  }
+}
+
+// BlockHeader is the header of a block.
+message BlockHeader {
+  // GenesisRef contains a reference to the Genesis object.
+  StorageRef genesis_ref = 1;
+}
+
+// Genesis is the object containing the blockchain identity.
+message Genesis {
+  // ChainId is used to differentiate between chains, but could be set to anything.
+  // It is an opaque value and ignored by the system.
+  string chain_id = 1;
+  // Timestamp contains the time the genesis block was formed.
+  timestamp.Timestamp timestamp = 2;
+}
