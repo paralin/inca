@@ -1,8 +1,8 @@
 syntax = "proto3";
 package inca;
 
-import "github.com/go-libp2p-crypto/pb/crypto.proto";
-import "github.com/aperturerobotics/inca/timestamp/timestamp.proto";
+import "github.com/libp2p/go-libp2p-crypto/pb/crypto.proto";
+import "github.com/aperturerobotics/timestamp/timestamp.proto";
 
 // StorageRef references storage.
 message StorageRef {

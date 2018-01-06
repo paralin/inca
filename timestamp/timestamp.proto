@@ -1,8 +1,0 @@
-syntax = "proto3";
-package timestamp;
-
-// Timestamp contains a unix millisecond timestamp.
-message Timestamp {
-  // TimeUnixMs is the millisecond timestamp.
-  uint64 time_unix_ms = 1;
-}
