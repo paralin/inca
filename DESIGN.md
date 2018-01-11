@@ -51,22 +51,64 @@ Validating a block requires
  
 Downloading the blockchain involves traversing the chain backward until a known base:
 
+## Node Chains
 
+Each node has its own block-chain of messages, like `Vote` objects. Each message has a reference to the previous message. A node must make messages sequentially, and must timestamp each message.
 
-## Lookup Tables
+Nodes will be slashed for the following infractions:
+
+ - Signing two `NodeMessage` with the same parent reference
+ - Signing a `NodeMessage` with a timestamp before the previous message.
+ - Signing two `NodeMessage` with `is_genesis=true` and the same genesis object reference.
+
+Sending a pubsub message to the network involves:
+
+ - Wrap the message object in a `pbobject.Object` and sign/encrypt it appropriately, storing in storage.
+ - Build a `NodeMessage` object, timestamped, with a reference to the previous NodeMessage and the inner object.
+ - Wrap the `NodeMessage` in a `pbobject.Object` and sign/encrypt it, storing in storage.
+ - Send the hash of the wrapped NodeMessage to the pubsub channel.
+
+## Merkle Tries and Storage
+
+Inca stores its data in content-addressed distributed storage. The first implementation uses IPFS, but is pluggable, and can use any storage. 
+
+Storage is powered by the [pbobject](https://github.com/aperturerobotics/pbobject) object-based encryption and storage mechanism. Each object has its own encryption algorithms and behaviors, tweakable by the user.
+
+Data moves through various caching layers, described as:
+
+ - In-memory cache: use a LRU to store recently looked up objects
+ - Database cache: use the local key-value DB to store all looked up objects in the current state that are not outdated
+ - IPFS: store all objects encrypted, "pin" some or all of the blockchain data depending on the operating mode
+
+The conceptual stack of data is then:
+
+ - **pbobject.Object**: instance of the object in memory. (in-memory cache)
+ - **pbobject.ObjectWrapper**: encoded, possibly encrypted object wrapped in metadata. (database cache)
+ - **ipfs.Object**: encoded object wrapper stored in IPFS, addressed by hash (IPFS storage)
+ - **ipfs.Block**: block of data of fixed size, used as a unit when transporting data.
+ 
+Writing involves going down the stack, reading involves reading up the stack.
+
+The object types we store in storage are:
+
+ - **Genesis**: required as a prerequisite for interacting with the chain at all, contains chain ID, chain mint timestamp, and pointer to first block.
+ - **NodeMessage**: a message in the chain of messages coming from a node.
+
+## Chain Structure
+
+The system frequently will encounter a block that is further in the future than the local HEAD. Processing this requires traversing the chain backwards to the locally known HEAD (also known as the "root").
+
+Each hash is approximately 50-60 bytes unencoded and around 90 bytes encoded and encrypted.
+
+To traverse forward quickly, a node can broadcast a "hint request." 
 
 These are the lookup tables that we might want:
 
  - KeyMultihash: key multihashes to public keys
- - 
 
 ## Encryption and Storage
 
-Objects are encoded to IPFS using [pbobject](https://github.com/aperturerobotics/pbobject). This allows for each object to identify a unique encryption mechanism.
-
 These are the kinds of encrypted objects:
-
- - **Genesis**: AES-256 bit PSK, required as a prerequisite for interacting with the chain at all.
  
 Each object has its default encryption specified in a table, but this can be overridden by the user if desired without modifying Inca.
 
@@ -109,5 +151,7 @@ Allow the application developer to specify a **Policy** which determines what ha
  - **DoublePropose**: a proposer proposed two proposals for a round.
  - **MistimedRound**: a round was started before it should have been.
  - **InvalidChainHint**: a chain hint contained data for the wrong blockchain.
+ - **NodeChainFork**: a node signed two objects at the same height.
  
 Additionally, timing-based detections can be added later. Each detection has a configurable response by the user, so experimental detections can yield a warning in the beginning.
+

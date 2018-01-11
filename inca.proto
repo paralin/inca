@@ -92,3 +92,16 @@ message TimingConfig {
   // This is a soft limit, it's still OK to propose a empty block before this timeout.
   uint32 max_propose_after_block = 2;
 }
+
+// NodeMessage is a pub-sub message submitted to the network by a peer.
+message NodeMessage {
+  // GenesisRef contains a reference to the Genesis object.
+  storageref.StorageRef genesis_ref = 1;
+  // PrevMsgRef is the reference to the previous NodeMessage.
+  storageref.StorageRef prev_msg_ref = 2;
+  // Timestamp is the timestamp of this NodeMessage.
+  // The timestamp must be after the timestamp of the previous message.
+  timestamp.Timestamp timestamp = 3;
+  // InnerRef is the reference to the inner object sent in this message.
+  storageref.StorageRef inner_ref = 4;
+}
