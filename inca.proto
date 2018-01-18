@@ -72,7 +72,7 @@ message Genesis {
   string chain_id = 1;
   // Timestamp contains the time the genesis block was formed.
   timestamp.Timestamp timestamp = 2;
-  // EncryptionStrategy is the encryption strategy to use.
+  // EncStrategy is the encryption strategy to use.
   EncryptionStrategy enc_strategy = 3;
 }
 
@@ -110,4 +110,11 @@ message NodeMessage {
   timestamp.Timestamp timestamp = 3;
   // InnerRef is the reference to the inner object sent in this message.
   storageref.StorageRef inner_ref = 4;
+  // MessageType is the type of message this is.
+  NodeMessageType message_type = 5;
+}
+
+enum NodeMessageType {
+  NodeMessageType_UNKNOWN = 0;
+  NodeMessageType_
 }
