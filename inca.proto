@@ -56,7 +56,7 @@ message BlockHeader {
   // LastBlockRef contains a reference to the last Block object.
   storageref.StorageRef last_block_ref = 3;
   // RoundInfo contains the round information.
-  BlockRoundInfo round_info = 3;
+  BlockRoundInfo round_info = 4;
 }
 
 // Vote is a signature on a proposal by a validator.
@@ -72,8 +72,14 @@ message Genesis {
   string chain_id = 1;
   // Timestamp contains the time the genesis block was formed.
   timestamp.Timestamp timestamp = 2;
-  // FirstBlockRef contains a reference to the genesis Block.
-  storageref.StorageRef first_block_ref = 3;
+  // EncryptionStrategy is the encryption strategy to use.
+  EncryptionStrategy enc_strategy = 3;
+}
+
+enum EncryptionStrategy {
+  EncryptionStrategy_Invalid = 0;
+  EncryptionStrategy_ConvergentImmutable = 1;
+  // EncryptionStrategy_ConvergentMutable = 2;
 }
 
 // ChainConfig is the configuration for the blockchain. Can be updated each block.

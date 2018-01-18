@@ -4,14 +4,12 @@ This is a design outline for the initial prototype of Inca.
 
 Inca is loosely based on the [Tendermint](https://github.com/tendermint/tendermint/wiki/Byzantine-Consensus-Algorithm) algorithm (Apache 2 licensed).
 
-... but this implementation will be kick-ass.
-
 ## Core Concepts
 
- - A block contains zero or more transactions.
+ - A block contains references to zero or more transactions.
  - Deciding the next block is a process consisting of one or more rounds.
  - A validator may sign at most one block proposal per round.
- - Objects are stored in IPFS, encrypted on default.
+ - Objects are stored locally unencrypted, remotely encrypted.
  - Votes are timestamped. Timestamps cannot be in the future, and actions must be sequential.
  - Evidence foul play can be presented against a validator.
  - +2/3 consensus on a proposal for a round triggers the next round.
@@ -100,19 +98,31 @@ The system frequently will encounter a block that is further in the future than 
 
 Each hash is approximately 50-60 bytes unencoded and around 90 bytes encoded and encrypted.
 
+The state contains a linked merkle-list with pointers to the encrypted block and the digest of the decrypted block data.
+
 To traverse forward quickly, a node can broadcast a "hint request." 
 
 These are the lookup tables that we might want:
 
  - KeyMultihash: key multihashes to public keys
-
-## Encryption and Storage
-
-These are the kinds of encrypted objects:
  
-Each object has its default encryption specified in a table, but this can be overridden by the user if desired without modifying Inca.
+## Encryption Modes
 
-The encryption mechanism is recognized at read-time, so a blockchain could be migrated off of an insecure encryption mechanism gracefully without issue or re-encoding the chain.
+Here are the supported encryption modes:
+
+ - **ConvergentImmutable**: convergent encryption, immutable history (hash-links stored in-band).
+ - **ConvergentMutable**: TODO-not implemented, 
+ 
+## Alpha mode: ConvergentImmutable
+
+This mode is named immutable because the history is not mutable. In this mode, storage references are encoded including the multihash of the object with an IPFS reference to the encrypted object.
+
+Objects are stored as signed EncryptedBlob in SecretBox mode. The pre-shared key is static, not stored in the storage at all, and immutable (cannot be changed, even by transactions - this is a temporary limitation).
+
+The SecretBox parameters are:
+
+ - Preshared key: the chain pre-shared key
+ - Nonce: the last 24 bytes of the object multihash, stored in the storage reference.
 
 ## Chain Objects
 
