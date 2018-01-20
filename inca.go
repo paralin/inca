@@ -13,3 +13,18 @@ func (g *Genesis) GetObjectTypeID() *pbobject.ObjectTypeID {
 func (g *NodeMessage) GetObjectTypeID() *pbobject.ObjectTypeID {
 	return pbobject.NewObjectTypeID("/inca/node-message")
 }
+
+// GetObjectTypeID returns the object type string, used to identify types.
+func (g *ValidatorSet) GetObjectTypeID() *pbobject.ObjectTypeID {
+	return pbobject.NewObjectTypeID("/inca/validator-set")
+}
+
+// GetObjectTypeID returns the object type string, used to identify types.
+func (g *ChainConfig) GetObjectTypeID() *pbobject.ObjectTypeID {
+	return pbobject.NewObjectTypeID("/inca/chain-config")
+}
+
+// GetObjectTypeID returns the object type string, used to identify types.
+func (b *BlockHeader) GetObjectTypeID() *pbobject.ObjectTypeID {
+	return &pbobject.ObjectTypeID{TypeUuid: "/inca/block-header"}
+}

@@ -1,7 +1,6 @@
 syntax = "proto3";
 package inca;
 
-import "github.com/libp2p/go-libp2p-crypto/pb/crypto.proto";
 import "github.com/aperturerobotics/timestamp/timestamp.proto";
 import "github.com/aperturerobotics/storageref/storageref.proto";
 import "github.com/aperturerobotics/objectsig/objectsig.proto";
@@ -9,7 +8,7 @@ import "github.com/aperturerobotics/objectsig/objectsig.proto";
 // Validator holds information about a validator.
 message Validator {
   // PubKey is the validator's public key.
-  crypto.pb.PublicKey pub_key = 1;
+  bytes pub_key = 1;
   // VotingPower is the voting power of the validator.
   uint64 voting_power = 2;
   // OperationMode is the operation mode of the validator.
@@ -28,14 +27,14 @@ message Validator {
 // ValidatorSet is the current set of validators.
 message ValidatorSet {
   // Validators are the address to validator object pairings.
-  map<string, Validator> validators = 1;
-  // Timestamp is the time this validator set was minted.
-  timestamp.Timestamp timestamp = 2;
+  // Validators are sorted by crc32 of address and voting power concatinated.
+  repeated Validator validators = 1;
 }
 
 // Block is a committed block in the chain.
 message Block {
   // BlockHeaderRef is the reference to the block header.
+  // Must be signed by the proposer.
   storageref.StorageRef block_header_ref = 1;
   // VoteRefs are the validator votes included to justify this block.
   repeated storageref.StorageRef vote_refs = 2;
@@ -53,10 +52,12 @@ message BlockHeader {
   storageref.StorageRef genesis_ref = 1;
   // ChainConfigRef contains a reference to the ChainConfig object.
   storageref.StorageRef chain_config_ref = 2;
-  // LastBlockRef contains a reference to the last Block object.
-  storageref.StorageRef last_block_ref = 3;
+  // NextChainConfigRef contains a reference to the next ChainConfig object.
+  storageref.StorageRef next_chain_config_ref = 3;
+  // LastBlockRef contains a reference to the last BlockHeader object.
+  storageref.StorageRef last_block_ref = 4;
   // RoundInfo contains the round information.
-  BlockRoundInfo round_info = 4;
+  BlockRoundInfo round_info = 5;
 }
 
 // Vote is a signature on a proposal by a validator.
@@ -86,13 +87,16 @@ enum EncryptionStrategy {
 message ChainConfig {
   // TimingConfig contains the timing configuration.
   TimingConfig timing_config = 1;
+  // ValidatorSetRef contains a reference to the computed validator set.
+  // This must match the last block NextValidatorSetRef.
+  storageref.StorageRef validator_set_ref = 2;
 }
 
 // TimingConfig is the timing configuration for the blockchain.
 // Timings are in milliseconds (ms).
 message TimingConfig {
   // MinProposeAfterBlock is the minimum time after a block before the first round starts.
-  // The roud starts at block[i-1].Timestamp + MinProposeAfterBlock
+  // The round starts at block[i-1].Timestamp + MinProposeAfterBlock
   uint32 min_propose_after_block = 1;
   // MaxProposeAfterBlock is the maximum time to wait for at least one tx before an empty block is made.
   // This is a soft limit, it's still OK to propose a empty block before this timeout.
@@ -114,7 +118,7 @@ message NodeMessage {
   NodeMessageType message_type = 5;
 }
 
+// NodeMessageType identifies the purpose of the node message.
 enum NodeMessageType {
   NodeMessageType_UNKNOWN = 0;
-  NodeMessageType_
 }
