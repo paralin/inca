@@ -28,3 +28,13 @@ func (g *ChainConfig) GetObjectTypeID() *pbobject.ObjectTypeID {
 func (b *BlockHeader) GetObjectTypeID() *pbobject.ObjectTypeID {
 	return &pbobject.ObjectTypeID{TypeUuid: "/inca/block-header"}
 }
+
+// GetObjectTypeID returns the object type string, used to identify types.
+func (b *Block) GetObjectTypeID() *pbobject.ObjectTypeID {
+	return &pbobject.ObjectTypeID{TypeUuid: "/inca/block"}
+}
+
+// GetObjectTypeID returns the object type string, used to identify types.
+func (b *Vote) GetObjectTypeID() *pbobject.ObjectTypeID {
+	return &pbobject.ObjectTypeID{TypeUuid: "/inca/vote"}
+}

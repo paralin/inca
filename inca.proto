@@ -58,6 +58,8 @@ message BlockHeader {
   storageref.StorageRef last_block_ref = 4;
   // RoundInfo contains the round information.
   BlockRoundInfo round_info = 5;
+  // BlockTs is the timestamp the block header was proposed.
+  timestamp.Timestamp block_ts = 6;
 }
 
 // Vote is a signature on a proposal by a validator.
@@ -101,9 +103,11 @@ message TimingConfig {
   // MaxProposeAfterBlock is the maximum time to wait for at least one tx before an empty block is made.
   // This is a soft limit, it's still OK to propose a empty block before this timeout.
   uint32 max_propose_after_block = 2;
+  // RoundLength is the length of each round.
+  uint32 round_length = 3;
 }
 
-// NodeMessage is a pub-sub message submitted to the network by a peer.
+// NodeMessage is a message submitted to the network by a peer.
 message NodeMessage {
   // GenesisRef contains a reference to the Genesis object.
   storageref.StorageRef genesis_ref = 1;
@@ -118,7 +122,16 @@ message NodeMessage {
   NodeMessageType message_type = 5;
 }
 
+// ChainPubsubMessage is a message emitted by a node in the chain pubsub channel.
+message ChainPubsubMessage {
+  // NodeMessageRef contains a reference to the node message being sent.
+  storageref.StorageRef node_message_ref = 1;
+  // PeerId is the peer ID encoded in base58
+  string peer_id = 2;
+}
+
 // NodeMessageType identifies the purpose of the node message.
 enum NodeMessageType {
   NodeMessageType_UNKNOWN = 0;
+  NodeMessageType_VOTE = 1;
 }
