@@ -27,7 +27,7 @@ message Validator {
 // ValidatorSet is the current set of validators.
 message ValidatorSet {
   // Validators are the address to validator object pairings.
-  // Validators are sorted by crc32 of address and voting power concatinated.
+  // Validators are sorted by crc32 of pubkey and voting power (varint) concatinated.
   repeated Validator validators = 1;
 }
 
@@ -134,4 +134,5 @@ message ChainPubsubMessage {
 enum NodeMessageType {
   NodeMessageType_UNKNOWN = 0;
   NodeMessageType_VOTE = 1;
+  NodeMessageType_BLOCK_COMMIT = 2;
 }
