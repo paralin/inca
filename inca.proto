@@ -60,6 +60,8 @@ message BlockHeader {
   BlockRoundInfo round_info = 5;
   // BlockTs is the timestamp the block header was proposed.
   timestamp.Timestamp block_ts = 6;
+  // ProposerId is the proposer identifier.
+  string proposer_id = 7;
 }
 
 // Vote is a signature on a proposal by a validator.
