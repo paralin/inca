@@ -79,6 +79,8 @@ message Genesis {
   timestamp.Timestamp timestamp = 2;
   // EncStrategy is the encryption strategy to use.
   EncryptionStrategy enc_strategy = 3;
+  // InitChainConfig is the initial chain configuration.
+  storageref.StorageRef init_chain_config_ref = 4;
 }
 
 enum EncryptionStrategy {
