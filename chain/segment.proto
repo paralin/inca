@@ -21,6 +21,8 @@ message SegmentState {
   string segment_next = 6;
   // TailBlockRound is the block round info of the tail.
   inca.BlockRoundInfo tail_block_round = 7;
+  // InvalidError is the reason why this segment is invalid.
+  string invalid_error = 8;
 }
 
 // SegmentStatus is the status of a segment.
