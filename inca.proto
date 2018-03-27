@@ -137,9 +137,11 @@ message ChainPubsubMessage {
 }
 
 // NodeMessageType identifies the purpose of the node message.
-// Block commits are sent on their own channel, so that read-only clients can ignore voting chatter.
+// Each node message type gets its own pub-sub channel.
+// Additional types may be declared elsewhere.
 enum NodeMessageType {
   NodeMessageType_UNKNOWN = 0;
   NodeMessageType_VOTE = 1;
   NodeMessageType_BLOCK_COMMIT = 2;
+  NodeMessageType_APP = 3;
 }
