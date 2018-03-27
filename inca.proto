@@ -62,6 +62,8 @@ message BlockHeader {
   timestamp.Timestamp block_ts = 6;
   // ProposerId is the proposer identifier.
   string proposer_id = 7;
+  // StateRef is the reference to the application state.
+  storageref.StorageRef state_ref = 8;
 }
 
 // Vote is a signature on a proposal by a validator.
@@ -135,6 +137,7 @@ message ChainPubsubMessage {
 }
 
 // NodeMessageType identifies the purpose of the node message.
+// Block commits are sent on their own channel, so that read-only clients can ignore voting chatter.
 enum NodeMessageType {
   NodeMessageType_UNKNOWN = 0;
   NodeMessageType_VOTE = 1;

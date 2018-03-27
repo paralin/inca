@@ -6,8 +6,9 @@ Inca is loosely based on the [Tendermint](https://github.com/tendermint/tendermi
 
 ## Core Concepts
 
- - A block contains references to zero or more transactions.
  - Deciding the next block is a process consisting of one or more rounds.
+ - The state is a pointer to any structure in IPFS. 
+ - Transactions are not managed by Inca, but by the application itself.
  - A validator may sign at most one block proposal per round.
  - Objects are stored locally unencrypted, remotely encrypted.
  - Votes are timestamped. Timestamps cannot be in the future, and actions must be sequential.
@@ -31,12 +32,15 @@ So, the basic rule set:
  
 Block lifecycle:
 
- - Proposer proposes a BlockHeader, putting it into the hash-linked IPFS db.
- - Validators issue Vote 
+ - Proposer proposes a BlockHeader.
+ - Validators issue Vote if they agree on the proposal.
+ - Proposer issues a Block when requisite votes received.
  
 For some background, in the following examples these verbs are used:
 
  - Fetch: retrieve the encrypted object from IPFS, decrypt it with known key.
+ - Verify: return an error if a condition is not met that invalidates the object.
+ - Mark: store an attribute on the object in the localdb key/value store.
 
 Validating a block requires
 
@@ -164,4 +168,5 @@ Allow the application developer to specify a **Policy** which determines what ha
  - **NodeChainFork**: a node signed two objects at the same height.
  
 Additionally, timing-based detections can be added later. Each detection has a configurable response by the user, so experimental detections can yield a warning in the beginning.
+
 
