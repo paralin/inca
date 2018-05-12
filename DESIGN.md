@@ -50,18 +50,18 @@ Validating a block requires
  - Verify timestamp seems sane for the height and round given the last known height and round.
  - Validate vote set attached to block (fetch and verify Vote references) sums to +2/3 of previous block validators
  - Mark new block as trusted, move to next block.
- 
-Downloading the blockchain involves traversing the chain backward until a known base:
 
 ## Node Chains
 
 Each node has its own block-chain of messages, like `Vote` objects. Each message has a reference to the previous message. A node must make messages sequentially, and must timestamp each message.
 
-Nodes will be slashed for the following infractions:
+Examples of possible attacks against this model:
 
- - Signing two `NodeMessage` with the same parent reference
+ - Signing two `NodeMessage` with the same parent reference.
  - Signing a `NodeMessage` with a timestamp before the previous message.
  - Signing two `NodeMessage` with `is_genesis=true` and the same genesis object reference.
+ 
+These attacks are detectable by the network and enforced as per "Policies" below.
 
 Sending a pubsub message to the network involves:
 
@@ -80,7 +80,7 @@ Data moves through various caching layers, described as:
 
  - In-memory cache: use a LRU to store recently looked up objects
  - Database cache: use the local key-value DB to store all looked up objects in the current state that are not outdated
- - IPFS: store all objects encrypted, "pin" some or all of the blockchain data depending on the operating mode
+ - Block storage (IPFS, S3): store all objects encrypted, "pin" some or all of the blockchain data depending on the operating mode
 
 The conceptual stack of data is then:
 
@@ -98,17 +98,17 @@ The object types we store in storage are:
 
 ## Chain Structure
 
-The system frequently will encounter a block that is further in the future than the local HEAD. Processing this requires traversing the chain backwards to the locally known HEAD (also known as the "root").
+The system frequently will encounter a block that is further in the future than the local HEAD.
+
+There are multiple ways of handling this condition:
+
+ - Traverse the chain backwards until a verified block is encountered.
+ - Implicitly mark the new HEAD as valid, given some condition (same validator set, for example).
+ - Fast traverse backwards using validator set mutation pointers (link to the previous validator set change).
 
 Each hash is approximately 50-60 bytes unencoded and around 90 bytes encoded and encrypted.
 
 The state contains a linked merkle-list with pointers to the encrypted block and the digest of the decrypted block data.
-
-To traverse forward quickly, a node can broadcast a "hint request." 
-
-These are the lookup tables that we might want:
-
- - KeyMultihash: key multihashes to public keys
  
 ## Encryption Modes
 
@@ -117,7 +117,7 @@ Here are the supported encryption modes:
  - **ConvergentImmutable**: convergent encryption, immutable history (hash-links stored in-band).
  - **ConvergentMutable**: TODO-not implemented, 
  
-## Alpha mode: ConvergentImmutable
+### ConvergentImmutable
 
 This mode is named immutable because the history is not mutable. In this mode, storage references are encoded including the multihash of the object with an IPFS reference to the encrypted object.
 
@@ -134,22 +134,32 @@ Status: TODO - incomplete
 
 ### Genesis
 
-Status: TODO - incomplete
+Status: DONE - alpha
 
 ```proto
-// Genesis is the object containing the blockchain identity.
+// Genesis is the initial object starting the blockchain.
 message Genesis {
   // ChainId is used to differentiate between chains, but could be set to anything.
   // It is an opaque value and ignored by the system.
   string chain_id = 1;
   // Timestamp contains the time the genesis block was formed.
   timestamp.Timestamp timestamp = 2;
-  // TODO: validator set? app hash? encryption key?
+  // EncStrategy is the encryption strategy to use.
+  EncryptionStrategy enc_strategy = 3;
+  // InitChainConfig is the initial chain configuration.
+  storageref.StorageRef init_chain_config_ref = 4;
 }
 ```
 
-The genesis block contains the initial state of the blockchain, including the chain ID, init timestamp, initial validator set, and initial encryption key.
+### Vote
 
+```proto
+// Vote is a signature on a proposal by a validator.
+message Vote {
+  // BlockHeaderRef is the reference to the block header.
+  storageref.StorageRef block_header_ref = 1;
+}
+```
 
 ## Policies
 
@@ -169,4 +179,15 @@ Allow the application developer to specify a **Policy** which determines what ha
  
 Additionally, timing-based detections can be added later. Each detection has a configurable response by the user, so experimental detections can yield a warning in the beginning.
 
+## Block Validation Modes
 
+The below options are implemented as block validators in the code.
+
+### Immutable Validator Set
+
+With this enabled, the validator set cannot be changed (this is the current default).
+
+Implications:
+
+ - Validating a ValidatorSet requires checking if is equiv to the last valid block's set.
+ - A newer Block with an equiv ValidatorSet culd be used.

@@ -21,7 +21,7 @@ type ValidatorState struct {
 func (m *ValidatorState) Reset()                    { *m = ValidatorState{} }
 func (m *ValidatorState) String() string            { return proto.CompactTextString(m) }
 func (*ValidatorState) ProtoMessage()               {}
-func (*ValidatorState) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*ValidatorState) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 func (m *ValidatorState) GetLastVote() *inca.BlockRoundInfo {
 	if m != nil {
@@ -35,10 +35,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("github.com/aperturerobotics/inca/chain/validator.proto", fileDescriptor4)
+	proto.RegisterFile("github.com/aperturerobotics/inca/chain/validator.proto", fileDescriptor3)
 }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor3 = []byte{
 	// 155 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x32, 0x4b, 0xcf, 0x2c, 0xc9,
 	0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0x2c, 0x48, 0x2d, 0x2a, 0x29, 0x2d, 0x4a, 0x2d,

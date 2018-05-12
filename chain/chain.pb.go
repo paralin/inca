@@ -8,14 +8,12 @@ It is generated from these files:
 	github.com/aperturerobotics/inca/chain/chain.proto
 	github.com/aperturerobotics/inca/chain/chain_config.proto
 	github.com/aperturerobotics/inca/chain/proposer.proto
-	github.com/aperturerobotics/inca/chain/segment.proto
 	github.com/aperturerobotics/inca/chain/validator.proto
 
 It has these top-level messages:
 	ChainState
 	Config
 	ProposerState
-	SegmentState
 	ValidatorState
 */
 package chain

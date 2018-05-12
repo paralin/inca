@@ -106,9 +106,6 @@ message TimingConfig {
   // MinProposeAfterBlock is the minimum time after a block before the first round starts.
   // The round starts at block[i-1].Timestamp + MinProposeAfterBlock
   uint32 min_propose_after_block = 1;
-  // MaxProposeAfterBlock is the maximum time to wait for at least one tx before an empty block is made.
-  // This is a soft limit, it's still OK to propose a empty block before this timeout.
-  uint32 max_propose_after_block = 2;
   // RoundLength is the length of each round.
   uint32 round_length = 3;
 }
@@ -126,6 +123,8 @@ message NodeMessage {
   storageref.StorageRef inner_ref = 4;
   // MessageType is the type of message this is.
   NodeMessageType message_type = 5;
+  // AppMessageType is filled to identify the inner app message type.
+  uint32 app_message_type = 6;
 }
 
 // ChainPubsubMessage is a message emitted by a node in the chain pubsub channel.
@@ -137,7 +136,6 @@ message ChainPubsubMessage {
 }
 
 // NodeMessageType identifies the purpose of the node message.
-// Each node message type gets its own pub-sub channel.
 // Additional types may be declared elsewhere.
 enum NodeMessageType {
   NodeMessageType_UNKNOWN = 0;
