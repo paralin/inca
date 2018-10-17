@@ -112,19 +112,22 @@ message TimingConfig {
 
 // NodeMessage is a message submitted to the network by a peer.
 message NodeMessage {
+  // PubKey is the node's public key.
+  // This is checked against the wrapper's signature.
+  bytes pub_key = 1;
   // GenesisRef contains a reference to the Genesis object.
-  storageref.StorageRef genesis_ref = 1;
+  storageref.StorageRef genesis_ref = 2;
   // PrevMsgRef is the reference to the previous NodeMessage.
-  storageref.StorageRef prev_msg_ref = 2;
+  storageref.StorageRef prev_msg_ref = 3;
   // Timestamp is the timestamp of this NodeMessage.
   // The timestamp must be after the timestamp of the previous message.
-  timestamp.Timestamp timestamp = 3;
+  timestamp.Timestamp timestamp = 4;
   // InnerRef is the reference to the inner object sent in this message.
-  storageref.StorageRef inner_ref = 4;
+  storageref.StorageRef inner_ref = 5;
   // MessageType is the type of message this is.
-  NodeMessageType message_type = 5;
+  NodeMessageType message_type = 6;
   // AppMessageType is filled to identify the inner app message type.
-  uint32 app_message_type = 6;
+  uint32 app_message_type = 7;
 }
 
 // ChainPubsubMessage is a message emitted by a node in the chain pubsub channel.

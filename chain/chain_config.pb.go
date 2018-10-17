@@ -7,13 +7,19 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import inca "github.com/aperturerobotics/inca"
-import storageref "github.com/aperturerobotics/storageref"
 import pbobject "github.com/aperturerobotics/pbobject"
+import storageref "github.com/aperturerobotics/storageref"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Config is the configuration for a chain.
 type Config struct {
@@ -22,13 +28,35 @@ type Config struct {
 	// EncryptionArgs are arguments to the encryption strategy.
 	EncryptionArgs *pbobject.ObjectWrapper `protobuf:"bytes,2,opt,name=encryption_args,json=encryptionArgs" json:"encryption_args,omitempty"`
 	// EncryptionStrategy is the encryption scheme used for this chain.
-	EncryptionStrategy inca.EncryptionStrategy `protobuf:"varint,3,opt,name=encryption_strategy,json=encryptionStrategy,enum=inca.EncryptionStrategy" json:"encryption_strategy,omitempty"`
+	EncryptionStrategy   inca.EncryptionStrategy `protobuf:"varint,3,opt,name=encryption_strategy,json=encryptionStrategy,enum=inca.EncryptionStrategy" json:"encryption_strategy,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
 }
 
-func (m *Config) Reset()                    { *m = Config{} }
-func (m *Config) String() string            { return proto.CompactTextString(m) }
-func (*Config) ProtoMessage()               {}
-func (*Config) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (m *Config) Reset()         { *m = Config{} }
+func (m *Config) String() string { return proto.CompactTextString(m) }
+func (*Config) ProtoMessage()    {}
+func (*Config) Descriptor() ([]byte, []int) {
+	return fileDescriptor_chain_config_36a0f77c67d8aff6, []int{0}
+}
+func (m *Config) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Config.Unmarshal(m, b)
+}
+func (m *Config) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Config.Marshal(b, m, deterministic)
+}
+func (dst *Config) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Config.Merge(dst, src)
+}
+func (m *Config) XXX_Size() int {
+	return xxx_messageInfo_Config.Size(m)
+}
+func (m *Config) XXX_DiscardUnknown() {
+	xxx_messageInfo_Config.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Config proto.InternalMessageInfo
 
 func (m *Config) GetGenesisRef() *storageref.StorageRef {
 	if m != nil {
@@ -56,10 +84,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("github.com/aperturerobotics/inca/chain/chain_config.proto", fileDescriptor1)
+	proto.RegisterFile("github.com/aperturerobotics/inca/chain/chain_config.proto", fileDescriptor_chain_config_36a0f77c67d8aff6)
 }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor_chain_config_36a0f77c67d8aff6 = []byte{
 	// 250 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x41, 0x4b, 0x03, 0x31,
 	0x10, 0x85, 0x59, 0xc5, 0x1e, 0x52, 0xa8, 0x10, 0x41, 0x97, 0x9e, 0x8a, 0xa7, 0x82, 0x90, 0x85,

@@ -13,15 +13,43 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 // ProposerState is state for a proposer.
 type ProposerState struct {
-	LastProposal *inca.BlockRoundInfo `protobuf:"bytes,1,opt,name=last_proposal,json=lastProposal" json:"last_proposal,omitempty"`
+	LastProposal         *inca.BlockRoundInfo `protobuf:"bytes,1,opt,name=last_proposal,json=lastProposal" json:"last_proposal,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
-func (m *ProposerState) Reset()                    { *m = ProposerState{} }
-func (m *ProposerState) String() string            { return proto.CompactTextString(m) }
-func (*ProposerState) ProtoMessage()               {}
-func (*ProposerState) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (m *ProposerState) Reset()         { *m = ProposerState{} }
+func (m *ProposerState) String() string { return proto.CompactTextString(m) }
+func (*ProposerState) ProtoMessage()    {}
+func (*ProposerState) Descriptor() ([]byte, []int) {
+	return fileDescriptor_proposer_a3df4e6fda520661, []int{0}
+}
+func (m *ProposerState) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ProposerState.Unmarshal(m, b)
+}
+func (m *ProposerState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ProposerState.Marshal(b, m, deterministic)
+}
+func (dst *ProposerState) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProposerState.Merge(dst, src)
+}
+func (m *ProposerState) XXX_Size() int {
+	return xxx_messageInfo_ProposerState.Size(m)
+}
+func (m *ProposerState) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProposerState.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ProposerState proto.InternalMessageInfo
 
 func (m *ProposerState) GetLastProposal() *inca.BlockRoundInfo {
 	if m != nil {
@@ -35,10 +63,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("github.com/aperturerobotics/inca/chain/proposer.proto", fileDescriptor2)
+	proto.RegisterFile("github.com/aperturerobotics/inca/chain/proposer.proto", fileDescriptor_proposer_a3df4e6fda520661)
 }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor_proposer_a3df4e6fda520661 = []byte{
 	// 153 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x32, 0x4d, 0xcf, 0x2c, 0xc9,
 	0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0x2c, 0x48, 0x2d, 0x2a, 0x29, 0x2d, 0x4a, 0x2d,

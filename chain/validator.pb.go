@@ -13,15 +13,43 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 // ValidatorState is state for a validator.
 type ValidatorState struct {
-	LastVote *inca.BlockRoundInfo `protobuf:"bytes,1,opt,name=last_vote,json=lastVote" json:"last_vote,omitempty"`
+	LastVote             *inca.BlockRoundInfo `protobuf:"bytes,1,opt,name=last_vote,json=lastVote" json:"last_vote,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
-func (m *ValidatorState) Reset()                    { *m = ValidatorState{} }
-func (m *ValidatorState) String() string            { return proto.CompactTextString(m) }
-func (*ValidatorState) ProtoMessage()               {}
-func (*ValidatorState) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (m *ValidatorState) Reset()         { *m = ValidatorState{} }
+func (m *ValidatorState) String() string { return proto.CompactTextString(m) }
+func (*ValidatorState) ProtoMessage()    {}
+func (*ValidatorState) Descriptor() ([]byte, []int) {
+	return fileDescriptor_validator_8968b77a9e44de9d, []int{0}
+}
+func (m *ValidatorState) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ValidatorState.Unmarshal(m, b)
+}
+func (m *ValidatorState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ValidatorState.Marshal(b, m, deterministic)
+}
+func (dst *ValidatorState) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidatorState.Merge(dst, src)
+}
+func (m *ValidatorState) XXX_Size() int {
+	return xxx_messageInfo_ValidatorState.Size(m)
+}
+func (m *ValidatorState) XXX_DiscardUnknown() {
+	xxx_messageInfo_ValidatorState.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ValidatorState proto.InternalMessageInfo
 
 func (m *ValidatorState) GetLastVote() *inca.BlockRoundInfo {
 	if m != nil {
@@ -35,10 +63,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("github.com/aperturerobotics/inca/chain/validator.proto", fileDescriptor3)
+	proto.RegisterFile("github.com/aperturerobotics/inca/chain/validator.proto", fileDescriptor_validator_8968b77a9e44de9d)
 }
 
-var fileDescriptor3 = []byte{
+var fileDescriptor_validator_8968b77a9e44de9d = []byte{
 	// 155 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x32, 0x4b, 0xcf, 0x2c, 0xc9,
 	0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0x2c, 0x48, 0x2d, 0x2a, 0x29, 0x2d, 0x4a, 0x2d,
