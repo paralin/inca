@@ -1,7 +1,7 @@
 syntax = "proto3";
 package segment;
 
-import "github.com/aperturerobotics/storageref/storageref.proto";
+import "github.com/aperturerobotics/hydra/cid/cid.proto";
 import "github.com/aperturerobotics/inca/inca.proto";
 
 // SegmentState tracks state of a Segment.
@@ -12,9 +12,9 @@ message SegmentState {
   // Status is the status of the segment.
   SegmentStatus status = 2;
   // HeadBlock is a reference to the HEAD of this segment.
-  storageref.StorageRef head_block = 3;
+  cid.BlockRef head_block = 3;
   // TailBlock is a reference to the TAIL of this segment.
-  storageref.StorageRef tail_block = 4;
+  cid.BlockRef tail_block = 4;
   // SegmentPrev is the previous segment.
   string segment_prev = 5;
   // SegmentNext is the next segment.

@@ -2,8 +2,7 @@ syntax = "proto3";
 package inca;
 
 import "github.com/aperturerobotics/timestamp/timestamp.proto";
-import "github.com/aperturerobotics/storageref/storageref.proto";
-import "github.com/aperturerobotics/objectsig/objectsig.proto";
+import "github.com/aperturerobotics/hydra/cid/cid.proto";
 
 // Validator holds information about a validator.
 message Validator {
@@ -35,9 +34,9 @@ message ValidatorSet {
 message Block {
   // BlockHeaderRef is the reference to the block header.
   // Must be signed by the proposer.
-  storageref.StorageRef block_header_ref = 1;
+  cid.BlockRef block_header_ref = 1;
   // VoteRefs are the validator votes included to justify this block.
-  repeated storageref.StorageRef vote_refs = 2;
+  repeated cid.BlockRef vote_refs = 2;
 }
 
 // BlockRoundInfo contains information about the round.
@@ -49,13 +48,13 @@ message BlockRoundInfo {
 // BlockHeader is the header of a block.
 message BlockHeader {
   // GenesisRef contains a reference to the Genesis object.
-  storageref.StorageRef genesis_ref = 1;
+  cid.BlockRef genesis_ref = 1;
   // ChainConfigRef contains a reference to the ChainConfig object.
-  storageref.StorageRef chain_config_ref = 2;
+  cid.BlockRef chain_config_ref = 2;
   // NextChainConfigRef contains a reference to the next ChainConfig object.
-  storageref.StorageRef next_chain_config_ref = 3;
+  cid.BlockRef next_chain_config_ref = 3;
   // LastBlockRef contains a reference to the last BlockHeader object.
-  storageref.StorageRef last_block_ref = 4;
+  cid.BlockRef last_block_ref = 4;
   // RoundInfo contains the round information.
   BlockRoundInfo round_info = 5;
   // BlockTs is the timestamp the block header was proposed.
@@ -63,13 +62,13 @@ message BlockHeader {
   // ProposerId is the proposer identifier.
   string proposer_id = 7;
   // StateRef is the reference to the application state.
-  storageref.StorageRef state_ref = 8;
+  cid.BlockRef state_ref = 8;
 }
 
 // Vote is a signature on a proposal by a validator.
 message Vote {
   // BlockHeaderRef is the reference to the block header.
-  storageref.StorageRef block_header_ref = 1;
+  cid.BlockRef block_header_ref = 1;
 }
 
 // Genesis is the initial object starting the blockchain.
@@ -82,7 +81,7 @@ message Genesis {
   // EncStrategy is the encryption strategy to use.
   EncryptionStrategy enc_strategy = 3;
   // InitChainConfig is the initial chain configuration.
-  storageref.StorageRef init_chain_config_ref = 4;
+  cid.BlockRef init_chain_config_ref = 4;
 }
 
 enum EncryptionStrategy {
@@ -97,7 +96,7 @@ message ChainConfig {
   TimingConfig timing_config = 1;
   // ValidatorSetRef contains a reference to the computed validator set.
   // This must match the last block NextValidatorSetRef.
-  storageref.StorageRef validator_set_ref = 2;
+  cid.BlockRef validator_set_ref = 2;
 }
 
 // TimingConfig is the timing configuration for the blockchain.
@@ -116,14 +115,14 @@ message NodeMessage {
   // This is checked against the wrapper's signature.
   bytes pub_key = 1;
   // GenesisRef contains a reference to the Genesis object.
-  storageref.StorageRef genesis_ref = 2;
+  cid.BlockRef genesis_ref = 2;
   // PrevMsgRef is the reference to the previous NodeMessage.
-  storageref.StorageRef prev_msg_ref = 3;
+  cid.BlockRef prev_msg_ref = 3;
   // Timestamp is the timestamp of this NodeMessage.
   // The timestamp must be after the timestamp of the previous message.
   timestamp.Timestamp timestamp = 4;
   // InnerRef is the reference to the inner object sent in this message.
-  storageref.StorageRef inner_ref = 5;
+  cid.BlockRef inner_ref = 5;
   // MessageType is the type of message this is.
   NodeMessageType message_type = 6;
   // AppMessageType is filled to identify the inner app message type.
@@ -133,7 +132,7 @@ message NodeMessage {
 // ChainPubsubMessage is a message emitted by a node in the chain pubsub channel.
 message ChainPubsubMessage {
   // NodeMessageRef contains a reference to the node message being sent.
-  storageref.StorageRef node_message_ref = 1;
+  cid.BlockRef node_message_ref = 1;
   // PeerId is the peer ID encoded in base58
   string peer_id = 2;
 }

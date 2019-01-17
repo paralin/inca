@@ -10,16 +10,19 @@ func TestSelectProposer(t *testing.T) {
 	vs := &ValidatorSet{
 		Validators: []*Validator{
 			&Validator{
-				PubKey:      []byte("key1"),
-				VotingPower: 10,
+				PubKey:        []byte("key1"),
+				VotingPower:   10,
+				OperationMode: Validator_OperationMode_OPERATING,
 			},
 			&Validator{
-				PubKey:      []byte("key2"),
-				VotingPower: 20,
+				PubKey:        []byte("key2"),
+				VotingPower:   20,
+				OperationMode: Validator_OperationMode_OPERATING,
 			},
 			&Validator{
-				PubKey:      []byte("key3"),
-				VotingPower: 2,
+				PubKey:        []byte("key3"),
+				VotingPower:   2,
+				OperationMode: Validator_OperationMode_OPERATING,
 			},
 		},
 	}
