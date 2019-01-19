@@ -1,8 +1,10 @@
 syntax = "proto3";
 package inca;
 
-import "github.com/aperturerobotics/timestamp/timestamp.proto";
+import "github.com/aperturerobotics/bifrost/peer/peer.proto";
 import "github.com/aperturerobotics/hydra/cid/cid.proto";
+import "github.com/aperturerobotics/timestamp/timestamp.proto";
+import "github.com/aperturerobotics/objectsig/objectsig.proto";
 
 // Validator holds information about a validator.
 message Validator {
@@ -17,32 +19,29 @@ message Validator {
   enum OperationMode {
     // OperationMode_STAGING indicates the validator is not currently online.
     // A validator can voluntarily step-down for some time this way.
+    // The validator can step up by voting on a block.
     OperationMode_STAGING = 0;
     // OperationMode_OPERATING indicates the validator is currently operating.
     OperationMode_OPERATING = 1;
   }
 }
 
-// ValidatorSet is the current set of validators.
+// ValidatorSet is a set of validators.
 message ValidatorSet {
-  // Validators are the address to validator object pairings.
-  // Validators are sorted by crc32 of pubkey and voting power (varint) concatinated.
+  // Validators are the address to validator object pairings. Validators are
+  // sorted by crc32 of pubkey and voting power (little endian) concatinated.
+  // Object: Validator
   repeated Validator validators = 1;
 }
 
 // Block is a committed block in the chain.
 message Block {
   // BlockHeaderRef is the reference to the block header.
-  // Must be signed by the proposer.
   cid.BlockRef block_header_ref = 1;
-  // VoteRefs are the validator votes included to justify this block.
+  // VoteRefs are the validator votes included to justify this block. The block
+  // header must be identical across the votes and equal to the block_header_ref
+  // in the Block. 
   repeated cid.BlockRef vote_refs = 2;
-}
-
-// BlockRoundInfo contains information about the round.
-message BlockRoundInfo {
-  uint64 height = 1;
-  uint64 round = 2;
 }
 
 // BlockHeader is the header of a block.
@@ -51,24 +50,39 @@ message BlockHeader {
   cid.BlockRef genesis_ref = 1;
   // ChainConfigRef contains a reference to the ChainConfig object.
   cid.BlockRef chain_config_ref = 2;
-  // NextChainConfigRef contains a reference to the next ChainConfig object.
+  // NextChainConfigRef contains a reference to the next ChainConfig object. The
+  // entire next BlockHeader must then be written within BlockRef range of the
+  // next chain config. Field should be empty if equal to chain_config_ref.
   cid.BlockRef next_chain_config_ref = 3;
-  // LastBlockRef contains a reference to the last BlockHeader object.
-  cid.BlockRef last_block_ref = 4;
+  // PrevBlockRef contains a reference to the prev Block object.
+  cid.BlockRef prev_block_ref = 4;
   // RoundInfo contains the round information.
   BlockRoundInfo round_info = 5;
   // BlockTs is the timestamp the block header was proposed.
   timestamp.Timestamp block_ts = 6;
-  // ProposerId is the proposer identifier.
-  string proposer_id = 7;
+  // ValidatorIndex is the index in the ValidatorSet of the proposer.
+  uint32 validator_index = 7;
   // StateRef is the reference to the application state.
   cid.BlockRef state_ref = 8;
 }
 
+// BlockRoundInfo contains information about the round.
+message BlockRoundInfo {
+  uint64 height = 1;
+  uint64 round = 2;
+}
+
 // Vote is a signature on a proposal by a validator.
 message Vote {
-  // BlockHeaderRef is the reference to the block header.
-  cid.BlockRef block_header_ref = 1;
+  // ValidatorIndex is the index in the ValidatorSet of the voter. Refers to the
+  // block_header_ref->prev_block_ref ValidatorSet index. The ValidatorSet for
+  // the previous block is always used when voting for a new block.
+  uint32 validator_index = 1;
+  // ValidatorSignature contains the signature of the validator.
+  // The data signed is the encoded block_header_ref.
+  // The PubKey field should be empty.
+  // The PubKey should be inferred from the validator index.
+  peer.Signature validator_signature = 2;
 }
 
 // Genesis is the initial object starting the blockchain.
@@ -78,16 +92,8 @@ message Genesis {
   string chain_id = 1;
   // Timestamp contains the time the genesis block was formed.
   timestamp.Timestamp timestamp = 2;
-  // EncStrategy is the encryption strategy to use.
-  EncryptionStrategy enc_strategy = 3;
   // InitChainConfig is the initial chain configuration.
-  cid.BlockRef init_chain_config_ref = 4;
-}
-
-enum EncryptionStrategy {
-  EncryptionStrategy_Invalid = 0;
-  EncryptionStrategy_ConvergentImmutable = 1;
-  // EncryptionStrategy_ConvergentMutable = 2;
+  cid.BlockRef init_chain_config_ref = 3;
 }
 
 // ChainConfig is the configuration for the blockchain. Can be updated each block.
@@ -95,38 +101,39 @@ message ChainConfig {
   // TimingConfig contains the timing configuration.
   TimingConfig timing_config = 1;
   // ValidatorSetRef contains a reference to the computed validator set.
-  // This must match the last block NextValidatorSetRef.
   cid.BlockRef validator_set_ref = 2;
 }
 
 // TimingConfig is the timing configuration for the blockchain.
 // Timings are in milliseconds (ms).
 message TimingConfig {
-  // MinProposeAfterBlock is the minimum time after a block before the first round starts.
+  // MinProposeAfterBlock is the minimum time after a block before the next round starts.
   // The round starts at block[i-1].Timestamp + MinProposeAfterBlock
+  // Minimum: 0.
+  // Unit: milliseconds
   uint32 min_propose_after_block = 1;
   // RoundLength is the length of each round.
+  // Minimum: 100ms.
+  // Unit: milliseconds
   uint32 round_length = 3;
 }
 
 // NodeMessage is a message submitted to the network by a peer.
+// The node is identified by the pubsub transport.
 message NodeMessage {
-  // PubKey is the node's public key.
-  // This is checked against the wrapper's signature.
-  bytes pub_key = 1;
   // GenesisRef contains a reference to the Genesis object.
-  cid.BlockRef genesis_ref = 2;
+  cid.BlockRef genesis_ref = 1;
   // PrevMsgRef is the reference to the previous NodeMessage.
-  cid.BlockRef prev_msg_ref = 3;
+  cid.BlockRef prev_msg_ref = 2;
   // Timestamp is the timestamp of this NodeMessage.
   // The timestamp must be after the timestamp of the previous message.
-  timestamp.Timestamp timestamp = 4;
+  timestamp.Timestamp timestamp = 3;
   // InnerRef is the reference to the inner object sent in this message.
-  cid.BlockRef inner_ref = 5;
+  cid.BlockRef inner_ref = 4;
   // MessageType is the type of message this is.
-  NodeMessageType message_type = 6;
+  NodeMessageType message_type = 5;
   // AppMessageType is filled to identify the inner app message type.
-  uint32 app_message_type = 7;
+  uint32 app_message_type = 6;
 }
 
 // ChainPubsubMessage is a message emitted by a node in the chain pubsub channel.

@@ -28,7 +28,7 @@ func (b *BlockHeader) ApplyRef(id uint32, ptr *cid.BlockRef) error {
 	case 3:
 		b.NextChainConfigRef = ptr
 	case 4:
-		b.LastBlockRef = ptr
+		b.PrevBlockRef = ptr
 	case 8:
 		b.StateRef = ptr
 	}
